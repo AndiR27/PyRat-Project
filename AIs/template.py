@@ -1,6 +1,8 @@
 # Template file to create an AI for the game PyRat
 # http://formations.telecom-bretagne.eu/pyrat
 
+from AIs.Graphe import Graph
+
 ###############################
 # When the player is performing a move, it actually sends a character to the main program
 # The four possibilities are defined here
@@ -24,19 +26,28 @@ MOVE_UP = 'U'
 # used later to move the player in the maze.
 ###############################
 # Arguments are:
-# mazeMap : dict(pair(int, int), dict(pair(int, int), int))
+# mazeMap : dict{pair(int, int), dict{pair(int, int), int}}
+#clé = position de la case, val = les voisins + cout
 # mazeWidth : int
 # mazeHeight : int
 # playerLocation : pair(int, int)
 # opponentLocation : pair(int,int)
 # piecesOfCheese : list(pair(int, int))
 # timeAllowed : float
+x = 1
+def creation_graphe(mazeMap):
+    g = mazeMap
+    graph = Graph(g)
+    print("Graph du projet :")
+    print(graph)
+
 ###############################
 # This function is not expected to return anything
 def preprocessing(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocation, piecesOfCheese, timeAllowed):
     
     # Example prints that appear in the shell only at the beginning of the game
     # Remove them when you write your own program
+    creation_graphe(mazeMap)
     print("<b>[mazeMap]</b> " + repr(mazeMap))
     print("<b>[mazeWidth]</b> " + repr(mazeWidth))
     print("<b>[mazeHeight]</b> " + repr(mazeHeight))
@@ -67,6 +78,8 @@ def turn(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocation, playe
     # Example print that appears in the shell at every turn
     # Remove it when you write your own program
     print("Move: [" + MOVE_UP + "]")
-    
+    print("Move: [" + MOVE_RIGHT + "]")
+
+
     # In this example, we always go up
     return MOVE_UP

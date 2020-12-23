@@ -1,0 +1,25 @@
+Pouzr le projet :
+
+1. Bien comprendre comment tout fonctionne (fonctions, params, etc...)
+
+2.Il faut se créer une structure de données (classe maze pour le labyrinthe par exemple, 
+chaque sommet est une noeud et on a un labyrithe avec des noeuds doublement chainée)
+
+3. Nos algos seront utilisés sur cette classe, il faut princiapelement avoir nos classes dans AIs
+
+-> Dans template, on a toutes les variables nécessaires à la création de notre graphe avec mazeMap étant un dico contenant les cases et leur voisins
+-> Dans template, définit le labyrinthe en lancant le jeu et effectuant les mouvements chaque tour
+avec la methode turn, grâce à notre algo, on dira à la methode turn si il faudra UP, DOWN, LEFT, ou RIGHT selon le meilleur chemin à prendre/chemin possible à prendre
+
+4. Peut-être faire une classe priority Queue
+
+5. Pour la classe noeud = la case avec plusieurs variables :
+ - up, down, left, right (de type noeud, si None, c'est un mur)
+ - fromage boolean
+ - dicoCout : dict = {up : 0; down : 1; left: 0; right: 0} { clé = noeud : value = coût}
+
+ - différentes methodes : constructeur,gestion de up, down. left, right
+
+6. Classe maze (Graphe) :
+
+7. Classe Algos :
