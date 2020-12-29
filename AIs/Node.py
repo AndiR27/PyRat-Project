@@ -4,9 +4,14 @@ class Node:
 
         self.__coordonneeX = coordonneeX
         self.__coordonneeY = coordonneeY
-        self.__value = str(coordonneeX) + str(coordonneeY)
+        # 5-10
+        self.__value = str(coordonneeX) + "-" + str(coordonneeY)
         self.__cheese = False
         # dicoCout : dict = {down : 1} { clé = noeud : value = coût (si 0, alors c'est un mur}
+
+    def __str__(self):
+        return "x: " + str(self.__coordonneeX) + ", y: " + str(self.__coordonneeY)
+
     def get_X(self) -> int:
         return self.__coordonneeX
 
@@ -24,8 +29,13 @@ class Node:
     def have_prev(self) -> bool:
         return self.__prev is not None
 
-    def __str__(self):
-        return "x: " + str(self.__coordonneeX) + ", y: " + str(self.__coordonneeY)
+
+
+    def get_fromage(self):
+        return self.__cheese
+
+    def set_fromage(self):
+        self.__cheese = True
 
     def __eq__(self, other):
         return other == self.__value

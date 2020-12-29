@@ -19,15 +19,8 @@ class Graph(object):
         #creation des noeuds :
         self.creation_Nodes(graph_dict)
 
-
         #creations et ajout des relations :
         self.creation_relations(self.graph_dict_Nodes, graph_dict)
-
-        for key in self.graph_dict_Nodes:
-            print("Le noeud en pos " + str(key.get_X()) + " " + str(key.get_Y()) + " est relié à :")
-            for value in self.graph_dict_Nodes[key]:
-                print("Au noeud en pos " + str(value.get_X()) + " " + str(value.get_Y()) + " avec un coût de : " + str(self.graph_dict_Nodes[key][value]))
-            print()
 
         self.__graph_dict: dict = self.graph_dict_Nodes
         #dict{pair, relations} -----> dict{noeud, relations}
@@ -35,13 +28,17 @@ class Graph(object):
 
 
     def __str__(self):
-        res: str = "vertices: "
-        for k in self.__graph_dict:
-            res += str(k) + " "
-        res += "\nedges: "
-        for edge in self.__generate_edges():
-            res += str(edge) + " "
+        res: str = ""
+        for key in self.graph_dict_Nodes:
+            res += "Le noeud en pos " + str(key.get_X()) + " " + str(key.get_Y()) + " est relié à :\n"
+            if key.get_fromage() is True:
+                res += "Ce noeud a un fromage\n"
+            for value in self.graph_dict_Nodes[key]:
+                res += "Au noeud en pos " + str(value.get_X()) + " " + str(value.get_Y()) + " avec un coût de : " + str(
+                    self.graph_dict_Nodes[key][value])+ "\n"
+            res += "\n"
         return res
+
 
     def creation_Nodes(self, graph_dict: dict):
         #
@@ -58,8 +55,7 @@ class Graph(object):
         n = Node(posX, posY)
         dico_relations = {}  # noeud, cout
         self.graph_dict_Nodes[n] = dico_relations
-        print(n)
-        print(n.get_value())
+
 
 
     def creation_relations(self, dico_noeuds:dict, dico_relations:dict):
@@ -94,15 +90,15 @@ class Graph(object):
                         #changer le tupple par le noeud en question
 
                         #res = functools.reduce(lambda sub, ele: sub * 10 + ele, key3)
-                        res = ''.join(map(str,key3))
-                        n2 = self.__get_Node(res, self.vertices())
+                        res = '-'.join(map(str,key3))
+                        n2 = self.get_Node(res, self.vertices())
                         relationsAvecNoeuds[n2] = relations[key3]
                     dico_noeuds[key] = relationsAvecNoeuds
 
 
                 #break
 
-    def __get_Node(self, valNode:str, l: list):
+    def get_Node(self, valNode:str, l: list):
         """
 
         :param valNode:
@@ -112,12 +108,55 @@ class Graph(object):
             if valNode == n.get_value():
                 return n
 
+    def ajout_fromages(self, liste_fromage:list):
+        """
+        OPTIMISABLE
+        ajout des fromages sur les nodes
+        :param liste_fromage:
+        :return:
+        """
+        #[node1, node2,etc...]
+        liste_nodes = self.vertices()
+        for n in liste_nodes:
+            for i in liste_fromage:
+                res = '-'.join(map(str, i))
+                if res == n.get_value():
+                    n.set_fromage()
+                    break
+
+    def voisins(self, sommet: 'Node'):
+        """
+        retourne tous les voisins du noeud
+        :param sommet:
+        :return:
+        """
+        if sommet in self.graph_dict_Nodes.keys():
+            return self.graph_dict_Nodes[sommet].keys()
+        #va retourner {sommet : {key : valeur, key : valeur}
+
+    def get_cout(self, sommet: 'Node', voisin: 'Node') -> int:
+        if sommet in self.graph_dict_Nodes.keys():
+            return self.graph_dict_Nodes[sommet][voisin]
+
+
     def vertices(self) -> list:
         """
         retourne une liste de Noeuds des sommets
         :return:
         """
         return list(self.graph_dict_Nodes.keys())
+
+    def vertices_avec_fromages(self) -> list:
+        """
+        retourne une liste de Noeuds des sommets
+        :return:
+        """
+        l: list = []
+        for key in self.graph_dict_Nodes:
+            if key.get_fromage() is True:
+                l.append(key)
+        return l
+
 
     def edges(self) -> list:
         """
