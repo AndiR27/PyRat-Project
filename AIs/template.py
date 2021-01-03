@@ -13,12 +13,14 @@ MOVE_UP = 'U'
 ###############################
 # Please put your imports here
 from AIs.Graphe import Graph
+from AIs.Node import Node
 from AIs.AlgoV1 import *
 from time import time
 
 ###############################
 # Please put your global variables here
 path: list = []
+#fromages_restants: list = []
 
 ###############################
 # Preprocessing function
@@ -35,7 +37,7 @@ path: list = []
 # opponentLocation : pair(int,int)
 # piecesOfCheese : list(pair(int, int))
 # timeAllowed : float
-x = 1
+
 def creation_graphe(mazeMap, piecesOfCheese) -> 'Graph':
     g = mazeMap
     graph = Graph(g)
@@ -68,7 +70,6 @@ def test_dijkstra(graph: 'Graph'):
 
         #appel des directions en fonction de ce chemin pour TURN
 
-
 def direction(old: (int, int), next: 'Node' ) -> chr:
     """
     Retourne la direction à prendre
@@ -83,7 +84,6 @@ def direction(old: (int, int), next: 'Node' ) -> chr:
 
     if difference == (1, 0):
         print("Gauche")
-
         return MOVE_LEFT
     elif difference == (-1, 0):
         print("Droite")
@@ -105,9 +105,11 @@ def preprocessing(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocati
     
     # Example prints that appear in the shell only at the beginning of the game
     # Remove them when you write your own program
+    global fromages_restants
     t = time()
 
     g = creation_graphe(mazeMap, piecesOfCheese)
+    #fromages_restants = piecesOfCheese[:]
     test_dijkstra(g)
     for i in path:
         print(str(i), end=' ---> ')
@@ -142,11 +144,48 @@ def turn(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocation, playe
     
     # Example print that appears in the shell at every turn
     # Remove it when you write your own program
-    t = time()
+
+    #delete_fromage_pris(piecesOfCheese)
+    #check_fromage_around(playerLocation, piecesOfCheese, path[0])
+
 
     next_pos = path.pop(0)
 
     # In this example, we always go up
-    print(time() - t)
+
 
     return direction(playerLocation, next_pos)
+
+
+def delete_fromage_pris(piecesOfCheese):
+    """
+    supprime les fromages déjà pris de notre liste pour connaitre ceux encore présent dans la map
+    :param piecesOfCheese:
+    :return:
+    """
+
+def check_fromage_around(playerLocation, piecesOfCheese, next_position):
+    """
+    check si un fromage se trouve à côté du joueur pour le prendre
+    :param playerLocation:
+    :param piecesOfCheese:
+    :return:
+    """
+
+    global path, fromages_restants
+    new_pos = (next_position.get_X(), next_position.get_Y())
+
+    f_adjacents: [(int, int)] = [(playerLocation[0] + 1, playerLocation[1]),
+                               (playerLocation[0] - 1, playerLocation[1]),
+                               (playerLocation[0], playerLocation[1] + 1),
+                               (playerLocation[0], playerLocation[1] - 1)]
+
+    for next_case in f_adjacents:
+        if next_case not in fromages_restants or next_case == new_pos:
+            f_adjacents.remove(next_case)
+
+        #à rajouter : elif de la boue pour aller au fromage, alors on y va pas, car plus coûteux
+
+
+
+
