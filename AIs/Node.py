@@ -39,6 +39,9 @@ class Node:
     def set_fromage(self):
         self.__cheese = True
 
+    def set_fromage_false(self):
+        self.__cheese = False
+
     def get_routes(self):
         return self.__routes
 

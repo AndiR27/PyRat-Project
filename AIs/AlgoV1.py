@@ -97,7 +97,7 @@ def dijkstra(graph: Graph, source: object) -> tuple:
             alt = dist[u] + graph.get_voisin_cout(u, v)
             if alt < dist[v]:
                 dist[v] = alt
-                routage[v] = u
+                routage[v] = graph.get_Node(u)
                 Q.add(v, priority=alt)
     return dist, routage
 
@@ -119,5 +119,5 @@ def path_to(routing: dict, source: 'Node', destination: 'Node') -> list:
         while cur is not None:
             path.insert(0, cur)
             cur = routing[cur]
-        return path
+        return path[1:]
 

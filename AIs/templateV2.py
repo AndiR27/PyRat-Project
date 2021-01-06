@@ -22,7 +22,7 @@ from time import time
 graphMaze: Graph
 path: list = []
 fromages_restants: list = []
-
+nbr_fromages: int = 41
 
 ###############################
 # Preprocessing function
@@ -58,10 +58,10 @@ def test_dijkstra(playerLocation):
     # on peut calculer le chemin
 
     """
-    for i in graph.ListNodes:  # liste de tous les noeuds
+    for i in graphMaze.ListNodes:  # liste de tous les noeuds
         if i.get_fromage() == True:
             # pour aller d'un point A à B :
-            dist, rout = dijkstra(graph, i)
+            dist, rout = dijkstra(graphMaze, i)
             i.set_routes(rout)
             i.set_distances(dist)
         # chemin = (routage, source, destination)
@@ -71,12 +71,48 @@ def test_dijkstra(playerLocation):
     n_player = graphMaze.get_Node(playerLocation)
     n_milieu = graphMaze.get_Node((10, 7))
     dist, rout = dijkstra(graphMaze, n_player)
+    print("clés de route")
+    for key, v in rout.items():
+        print(key, end='->')
+        print(v)
+
+    print("clés de dist")
+    for key, v in dist.items():
+        print(key, end='->')
+        print(v)
     path = path_to(rout, n_player, n_milieu)
 
         #player_location = i
 
         # appel des directions en fonction de ce chemin pour TURN
 
+def test_dijkstra_tour(playerLocation, piecesOfCheese):
+    global path
+    # Boucle avec x nombre d'appels de l'algo Dijkstra :
+    # on aura notre distance
+    # on aura la route
+    # on peut calculer le chemin
+
+
+    n_player = graphMaze.get_Node(playerLocation)
+    dist, rout = dijkstra(graphMaze, n_player)
+    n_fromage = prochain_fromage_plus_proche(piecesOfCheese, rout, dist)
+    path = path_to(rout, n_player, n_fromage)
+
+        #player_location = i
+
+        # appel des directions en fonction de ce chemin pour TURN
+
+def prochain_fromage_plus_proche(piecesOfCheese, distances):
+    dist: int = 999
+    next_fromage: Node = None
+    for fromage in piecesOfCheese:
+        f = graphMaze.get_Node(fromage)
+        if distances[f] < dist:
+            dist = distances[f]
+            next_fromage = f
+
+    return next_fromage
 
 def direction(old: (int, int), next: 'Node') -> chr:
     """
@@ -153,23 +189,29 @@ def preprocessing(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocati
 # This function is expected to return a move
 def turn(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocation, playerScore, opponentScore, piecesOfCheese,
          timeAllowed):
-    global graphMaze, path
+    global graphMaze, path, nbr_fromages
     # Example print that appears in the shell at every turn
     # Remove it when you write your own program
 
     # Check la position adverse
-    # aller au mileu ? peut être plus opti (mais faire attention si l'adversaire va aussi au milieu
+    # aller au mileu ? peut être plus opti (mais faire attention si l'adversaire va aussi au milieu)
+
 
     # géner l'adversaire ?
     # créer la route avec le groupe de fromage opti
     #
     #delete_fromage_pris(playerLocation, opponentLocation)
     #verifier si y a un fromage à côté et si c'est pas trop chiant d'aller le chercher :
-    #check_fromage_around(playerLocation, piecesOfCheese, path[0], mazeMap)
+
 
     graphMaze.set_joueurs_location(playerLocation, opponentLocation)
-    #graphMaze.set_fromages()
+    graphMaze.set_fromages_tour(piecesOfCheese)
+    if (10,7) not in piecesOfCheese:
+        test_dijkstra_tour(playerLocation, piecesOfCheese)
+    #chaque tour, t'as la liste des fromages : [(10,7), (2,6),...]
+    #après avoir pris le fromage du milieu, t'as la liste des fromages : [(2,6),...]
 
+    # check_fromage_around(playerLocation, piecesOfCheese, path[0], mazeMap)
 
     next_pos = path.pop(0)
 

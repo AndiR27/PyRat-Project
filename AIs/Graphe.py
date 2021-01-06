@@ -71,6 +71,11 @@ class Graph(object):
             n: Node = self.get_Node(f)
             n.set_fromage()
 
+    def set_fromages_tour(self, fromages: [(int, int)]):
+        for n in self.ListNodes:
+            if n.get_coordonnes() not in fromages:
+                n.set_fromage_false()
+
     def get_voisins(self, position: (int, int)):
         n = self.get_Node(position)
         return n.get_voisins()
