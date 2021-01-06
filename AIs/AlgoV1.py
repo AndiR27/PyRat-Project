@@ -84,7 +84,7 @@ def dijkstra(graph: Graph, source: object) -> tuple:
     dist: dict = {source: 0}        # initialization
     routage: dict = {}              # routing table
     Q: PriorityQueue = PriorityQueue()  # create vertex priority queue Q
-    for v in graph.vertices():
+    for v in graph.ListNodes:
         if v != source:
             dist[v] = math.inf      # unknown distance from source to v
         routage[v] = None           # predecessor of v
@@ -93,8 +93,8 @@ def dijkstra(graph: Graph, source: object) -> tuple:
     while not Q.is_empty():         # the main loop
         vertex: tuple = Q.pop()     # remove and return best vertex
         u: Node = vertex[1]
-        for v in graph.voisins(u):  # only v that are still in Q
-            alt = dist[u] + graph.get_cout(u, v)
+        for v in graph.get_voisins(u):  # only v that are still in Q
+            alt = dist[u] + graph.get_voisin_cout(u, v)
             if alt < dist[v]:
                 dist[v] = alt
                 routage[v] = u
@@ -119,5 +119,5 @@ def path_to(routing: dict, source: 'Node', destination: 'Node') -> list:
         while cur is not None:
             path.insert(0, cur)
             cur = routing[cur]
-        return path[1:]
+        return path
 

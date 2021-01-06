@@ -20,7 +20,7 @@ from time import time
 ###############################
 # Please put your global variables here
 path: list = []
-#fromages_restants: list = []
+fromages_restants: list = []
 
 ###############################
 # Preprocessing function

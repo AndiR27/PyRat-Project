@@ -1,9 +1,15 @@
 from AIs.Node import Node
+#from AIs.AlgoV1 import *
 import functools
 
 class Graph(object):
 
-    def __init__(self, graph_dict: dict = None):
+    playerLocation: (int, int)
+    opponentLocation: (int, int)
+    ListNodes: [Node]
+
+
+    def __init__(self, map: dict, playerLocation: (int, int), opponentLocation: (int, int), piecesOfCheese : [(int, int)]):
         """
         initializes a graph object
         if no dictionary or None is given, an empty dictionary will be used
@@ -11,7 +17,7 @@ class Graph(object):
         {
             "a": {"d", valeur}, etc...
         }
-        """
+
         if graph_dict is None:
             graph_dict = {}
 
@@ -24,10 +30,15 @@ class Graph(object):
 
         self.__graph_dict: dict = self.graph_dict_Nodes
         #dict{pair, relations} -----> dict{noeud, relations}
-
-
+        """
+        self.playerLocation = playerLocation
+        self.opponentLocation = opponentLocation
+        self.ListNodes = self.__add_Nodes(map)
+        self.set_fromages(piecesOfCheese)
+        self.set_voisins(map)
 
     def __str__(self):
+        """
         res: str = ""
         for key in self.graph_dict_Nodes:
             res += "Le noeud en pos " + str(key.get_X()) + " " + str(key.get_Y()) + " est relié à :\n"
@@ -38,113 +49,76 @@ class Graph(object):
                     self.graph_dict_Nodes[key][value])+ "\n"
             res += "\n"
         return res
-
-
-    def creation_Nodes(self, graph_dict: dict):
-        #
-        for key in graph_dict:
-            # key = (0, 0)
-            # key:list = [0, 0]
-            # numeric_filter = filter(str.isdigit, key)
-            # numeric_string = " ".join(numeric_filter)
-            k: list = list(key)
-            self.__creation_Node(k[0], k[1])
-            # en plus, récuperer les valeurs et les ajouter comme relations
-
-    def __creation_Node(self, posX: int, posY: int):
-        n = Node(posX, posY)
-        dico_relations = {}  # noeud, cout
-        self.graph_dict_Nodes[n] = dico_relations
-
-
-
-    def creation_relations(self, dico_noeuds:dict, dico_relations:dict):
         """
+        str_nodes = ""
+        for i in self.ListNodes:
+            str_nodes += i.__str__()
+        return str_nodes
 
-        :param dico_noeuds:
-        :return:
-        """
-        #dico de base : {(0, 0): {(0, 1): 2}, (0, 1): {(0, 0): 2, (1, 1): 1},........}
-        #notre dico de noeuds ressemble à : {noeud1: {}, noeud2: {},......}
+    def __add_Nodes(self, map: dict):
+        l: [Node] = []
+        for key in map.keys():
+            l.append(self.__creation_Node(key))
+        return l
 
-        #il faut faire ça : {noeud1: {noeud2: 4, noeud3: 1}, noeud2: {noeud1: 4},......}
-        #première boucle : dico de base sur les clés :
-            #noeud 1 en (0, 0)
+    def __creation_Node(self, position: (int, int)):
+        n: Node = Node(position, False)
+        return n
 
+    def set_fromages(self, fromages: [(int, int)]):
 
-        for key in dico_noeuds:
-            #key = noeud
-            n: Node = key
-            #value = dico des relations = vide pour l'instant
-            for key2 in dico_relations:
-                tuppleKey = (n.get_X(), n.get_Y())
-                #key2 = tupple : (0, 0)
-                #comparer les 2 clés : si key == key2 alors :
-                # ajouter les valeurs de key2 dans value
-                if key2 == tuppleKey:
-                    relations:dict = dico_relations[key2]
-                    # key3 étant une relation Noeud
-                    relationsAvecNoeuds: dict = {}
-                    for key3 in relations:
-                        #trouver la ref du noeud selon les coordonnées:
-                        #changer le tupple par le noeud en question
+        for f in fromages:
+            n: Node = self.get_Node(f)
+            n.set_fromage()
 
-                        #res = functools.reduce(lambda sub, ele: sub * 10 + ele, key3)
-                        res = '-'.join(map(str,key3))
-                        n2 = self.get_Node(res, self.vertices())
-                        relationsAvecNoeuds[n2] = relations[key3]
-                    dico_noeuds[key] = relationsAvecNoeuds
+    def get_voisins(self, position: (int, int)):
+        n = self.get_Node(position)
+        return n.get_voisins()
 
+    def get_voisin_cout(self, position1, position2):
+        n1 = self.get_Node(position1)
+        n2 = self.get_Node(position2)
+        return n1.get_voisin_cout(n2)
 
-                #break
+    def set_voisins(self, map: dict):
+        for key in map.keys():
+            n = self.get_Node(key)
+            for key2 in map[key]:
+                n.set_voisins(key2, map[key][key2])
 
-    def get_Node(self, valNode:str, l: list):
-        """
+    def get_Node(self, position: (int, int)) -> 'Node':
 
-        :param valNode:
-        :return:
-        """
-        for n in l:
-            if valNode == n.get_value():
+        for n in self.ListNodes:
+            if  position == n.get_coordonnes():
                 return n
 
-    def ajout_fromages(self, liste_fromage:list):
+    def get_pos_list(self, posX: int, posY: int) -> int:
         """
-        OPTIMISABLE
-        ajout des fromages sur les nodes
-        :param liste_fromage:
+        (int, int)
+        Retourne la position du noeud dans la liste grâce à sa position
+        """
+        X = posX * 15
+        posList = X + posY
+        return posList
+
+
+    def get_next_node(self) -> 'Node':
+        """
+
         :return:
         """
-        #[node1, node2,etc...]
-        liste_nodes = self.vertices()
-        for n in liste_nodes:
-            for i in liste_fromage:
-                res = '-'.join(map(str, i))
-                if res == n.get_value():
-                    n.set_fromage()
-                    break
 
-    def voisins(self, sommet: 'Node'):
-        """
-        retourne tous les voisins du noeud
-        :param sommet:
-        :return:
-        """
-        if sommet in self.graph_dict_Nodes.keys():
-            return self.graph_dict_Nodes[sommet].keys()
-        #va retourner {sommet : {key : valeur, key : valeur}
-
-    def get_cout(self, sommet: 'Node', voisin: 'Node') -> int:
-        if sommet in self.graph_dict_Nodes.keys():
-            return self.graph_dict_Nodes[sommet][voisin]
+    def set_joueurs_location(self, player: (int, int), ennemy: (int, int)):
+        self.playerLocation = player
+        self.opponentLocation = ennemy
 
 
-    def vertices(self) -> list:
-        """
-        retourne une liste de Noeuds des sommets
-        :return:
-        """
-        return list(self.graph_dict_Nodes.keys())
+    """
+    def get_cout(self, sommet: 'Node') -> int:
+        if sommet in self.ListNodes:
+            return sommet.
+    """
+
 
     def vertices_avec_fromages(self) -> list:
         """

@@ -1,35 +1,37 @@
 class Node:
 
-    def __init__(self, coordonneeX: int, coordonneeY: int):
+    def __init__(self, position: (int, int), cheese: bool):
 
-        self.__coordonneeX = coordonneeX
-        self.__coordonneeY = coordonneeY
+
         # 5-10
-        self.__value = str(coordonneeX) + "-" + str(coordonneeY)
-        self.__cheese = False
-        # dicoCout : dict = {down : 1} { clé = noeud : value = coût (si 0, alors c'est un mur}
+        self.__coordonnes : (int, int) = position
+        self.__cheese : bool = cheese
+        self.__voisins : dict = {}
+        #= {down : 1} { clé = noeud : value = coût (si 0, alors c'est un mur}
+        self.__routes : dict = {}
+        self.__distances: dict = {}
 
     def __str__(self):
-        return "x: " + str(self.__coordonneeX) + ", y: " + str(self.__coordonneeY)
+        str_fromage = ""
+        if self.__cheese == True:
+            str_fromage += "+ fromage"
+        return "case en : " + str(self.__coordonnes) + str_fromage + " "
 
-    def get_X(self) -> int:
-        return self.__coordonneeX
 
-    def get_Y(self) -> int:
-        return self.__coordonneeY
+    def get_coordonnes(self):
+        return self.__coordonnes
 
-    def get_value(self):
-        return self.__value
-
-    def set_value(self, value):
-        self.__value = value
+    def get_Node(self, position: (int, int)):
         return self
 
+    def get_voisins(self):
+        return self.__voisins.keys()
 
-    def have_prev(self) -> bool:
-        return self.__prev is not None
+    def get_voisin_cout(self, n: 'Node') -> int:
+        return self.__voisins[n]
 
-
+    def set_voisins(self, n : 'Node', cout : int):
+        self.__voisins[n] = cout
 
     def get_fromage(self):
         return self.__cheese
@@ -37,8 +39,17 @@ class Node:
     def set_fromage(self):
         self.__cheese = True
 
+    def get_routes(self):
+        return self.__routes
+
+    def set_routes(self, routes: dict):
+        self.__routes = routes
+
+    def set_distances(self, dist: dict):
+        self.__distances = dist
+
     def __eq__(self, other):
-        return other == self.__value
+        return other == self.__coordonnes
 
     def __hash__(self):
-        return hash(self.__coordonneeX) ^ hash(self.__coordonneeY)
+        return hash(self.__coordonnes)
