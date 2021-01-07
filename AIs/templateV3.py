@@ -156,7 +156,7 @@ def preprocessing(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocati
 # This function is expected to return a move
 def turn(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocation, playerScore, opponentScore, piecesOfCheese,
          timeAllowed):
-    global graphMaze, path, go_milieu
+    global graphMaze, path, go_milieu, nbr_fromages
     # Example print that appears in the shell at every turn
     # Remove it when you write your own program
 
@@ -172,7 +172,11 @@ def turn(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocation, playe
 
 
     graphMaze.set_joueurs_location(playerLocation, opponentLocation)
-    graphMaze.set_fromages_tour(piecesOfCheese)
+
+    if nbr_fromages > len(piecesOfCheese):
+        nbr_fromages = len(piecesOfCheese)
+        graphMaze.set_fromages_tour(piecesOfCheese)
+
     go_milieu = graphMaze.check_fromage_milieu(playerLocation, opponentLocation, (10, 7))
 
     if (10,7) not in piecesOfCheese and go_milieu == False:
@@ -190,20 +194,6 @@ def turn(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocation, playe
     # In this example, we always go up
 
     return direction(playerLocation, next_pos)
-
-
-def delete_fromage_pris(playerLocation, opponentLocation):
-    """
-    supprime les fromages déjà pris de notre liste pour connaitre ceux encore présent dans la map
-    :param piecesOfCheese:
-    :return:
-    """
-
-    if playerLocation in fromages_restants:
-        fromages_restants.remove(playerLocation)
-    if opponentLocation in fromages_restants:
-        fromages_restants.remove(opponentLocation)
-
 
 
 def check_fromage_around(playerLocation, piecesOfCheese, next_position):
