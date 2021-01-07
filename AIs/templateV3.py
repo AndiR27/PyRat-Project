@@ -17,12 +17,15 @@ from AIs.Node import Node
 from AIs.AlgoV1 import *
 from time import time
 
+
+
 ###############################
 # Please put your global variables here
 graphMaze: Graph
 path: list = []
 fromages_restants: list = []
 nbr_fromages: int = 41
+go_milieu: bool = True
 
 ###############################
 # Preprocessing function
@@ -62,57 +65,25 @@ def test_dijkstra(playerLocation):
     dist, rout = dijkstra(graphMaze, n_player)
     print("clés de route")
     path = path_to(rout, n_player, n_milieu)
-    """
-    for i in graphMaze.ListNodes:  # liste de tous les noeuds
-        if i.get_fromage() == True:
 
-            # pour aller d'un point A à B :
-            dist, rout = dijkstra(graphMaze, i)
-            i.set_routes(rout)
-            i.set_distances(dist)
+    for i in graphMaze.ListNodes:  # liste de tous les noeuds ou y a un fromage
+        #if i.get_fromage() == True:
+
+        # pour aller d'un point A à B :
+        dist, rout = dijkstra(graphMaze, i)
+        i.set_routes(rout)
+        i.set_distances(dist)
 
         # chemin = (routage, source, destination)
         #path = path + path_to(rout, player_location, i)
-    """
 
 
 
-        #player_location = i
-
-        # appel des directions en fonction de ce chemin pour TURN
-
-def test_dijkstra_tour(playerLocation, piecesOfCheese):
-    global path
-    # Boucle avec x nombre d'appels de l'algo Dijkstra :
-    # on aura notre distance
-    # on aura la route
-    # on peut calculer le chemin
-    t = time()
-    nouveau_chemin: list = []
-    n_player = graphMaze.get_Node(playerLocation)
-    #dist, rout = dijkstra(graphMaze, n_player)
-    rout = n_player.get_routes()
-    dist = n_player.get_distances()
-    print(time() - t)
-    n_fromage = prochain_fromage_plus_proche(piecesOfCheese, dist)
-    nouveau_chemin = path_to(rout, n_player, n_fromage)
-    print(nouveau_chemin)
-    return nouveau_chemin[0]
 
         #player_location = i
 
         # appel des directions en fonction de ce chemin pour TURN
 
-def prochain_fromage_plus_proche(piecesOfCheese, distances):
-    dist: int = 999
-    next_fromage: Node = None
-    for fromage in piecesOfCheese:
-        f = graphMaze.get_Node(fromage)
-        if distances[f] < dist:
-            dist = distances[f]
-            next_fromage = f
-
-    return next_fromage
 
 def direction(old: (int, int), next: 'Node') -> chr:
     """
@@ -127,16 +98,12 @@ def direction(old: (int, int), next: 'Node') -> chr:
     difference: (int, int) = (old[0] - new[0], old[1] - new[1])
 
     if difference == (1, 0):
-        print("Gauche")
         return MOVE_LEFT
     elif difference == (-1, 0):
-        print("Droite")
         return MOVE_RIGHT
     elif difference == (0, -1):
-        print("Haut")
         return MOVE_UP
     elif difference == (0, 1):
-        print("Bas")
         return MOVE_DOWN
     else:
         raise RuntimeError("direction: old: " + str(old) + " new: " + str(new))
@@ -189,7 +156,7 @@ def preprocessing(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocati
 # This function is expected to return a move
 def turn(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocation, playerScore, opponentScore, piecesOfCheese,
          timeAllowed):
-    global graphMaze, path, nbr_fromages
+    global graphMaze, path, go_milieu
     # Example print that appears in the shell at every turn
     # Remove it when you write your own program
 
@@ -206,13 +173,18 @@ def turn(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocation, playe
 
     graphMaze.set_joueurs_location(playerLocation, opponentLocation)
     graphMaze.set_fromages_tour(piecesOfCheese)
-    if (10,7) not in piecesOfCheese:
-        next_pos = test_dijkstra_tour(playerLocation, piecesOfCheese)
+    go_milieu = graphMaze.check_fromage_milieu(playerLocation, opponentLocation, (10, 7))
+
+    if (10,7) not in piecesOfCheese and go_milieu == False:
+        next_pos = graphMaze.get_next_node()
     #chaque tour, t'as la liste des fromages : [(10,7), (2,6),...]
     #après avoir pris le fromage du milieu, t'as la liste des fromages : [(2,6),...]
 
     # check_fromage_around(playerLocation, piecesOfCheese, path[0], mazeMap)
     else:
+        #si y a moyen de prendre un fromage sur notre route de départ (donc si adjacent et pas de boue) alors on va le prendre
+        check_fromage_around(playerLocation, piecesOfCheese, path[0])
+        #mais il faut penser à check si le fromage du milieu est toujours atteignable avant ou en même temps que l'ennemie
         next_pos = path.pop(0)
 
     # In this example, we always go up
@@ -234,7 +206,7 @@ def delete_fromage_pris(playerLocation, opponentLocation):
 
 
 
-def check_fromage_around(playerLocation, piecesOfCheese, next_position, map):
+def check_fromage_around(playerLocation, piecesOfCheese, next_position):
     """
     check si un fromage se trouve à côté du joueur pour le prendre
     :param playerLocation:
@@ -243,16 +215,15 @@ def check_fromage_around(playerLocation, piecesOfCheese, next_position, map):
     """
 
     global path, fromages_restants
-    new_pos = (next_position.get_X(), next_position.get_Y())
 
     f_adjacents: [(int, int)] = [(playerLocation[0] + 1, playerLocation[1]),
                                  (playerLocation[0] - 1, playerLocation[1]),
                                  (playerLocation[0], playerLocation[1] + 1),
                                  (playerLocation[0], playerLocation[1] - 1)]
-
-
+    player_node: Node = graphMaze.get_Node(playerLocation)
     for next_case in f_adjacents:
-        if next_case not in fromages_restants or next_case == new_pos:
+        next_case_node: Node = graphMaze.get_Node(next_case)
+        if next_case_node.get_fromage() == False or next_case == next_position.get_coordonnes():
             f_adjacents.remove(next_case)
 
         # à rajouter : elif de la boue pour aller au fromage, alors on y va pas, car plus coûteux
@@ -260,35 +231,22 @@ def check_fromage_around(playerLocation, piecesOfCheese, next_position, map):
             # check lien entre playerLocation et next_case : graphe[playerLocation][next_case]
             #test si y a un mur
             # case 1 : relié à case 2, 3, 4 ; case 2 : relié à 1 5 6
-            if next_case not in map[playerLocation].keys():
+            if next_case_node not in player_node.get_voisins():
                 f_adjacents.remove(next_case)
             #test si boue :
-            elif map[playerLocation][next_case] > 1:
+            elif player_node.get_voisin_cout(next_case_node) > 1:
                 f_adjacents.remove(next_case)
 
             #alors on go sur le fromage, on l'ajoute à notre route par defaut
             else:
-                new_case : Node #la prochaine case avec le fromage à prendre
-                prev_case: Node #la case ou se trouvait le joueur avant d'aller sur le fromage
-                new_case = transform_to_node(next_case)
-                prev_case = transform_to_node(playerLocation)
-                path.insert(0, prev_case)
-                path.insert(0, new_case)
+                #la case ou se trouvait le joueur avant d'aller sur le fromage
+                print("CANCEL DRIFTU FROMAGE")
+                path.insert(0, player_node)
+                #la prochaine case avec le fromage à prendre
+                path.insert(0, next_case_node)
 
 
 
-
-
-
-def transform_to_node(case) -> 'Node':
-    """
-    transformer la case au noeud en question :
-    :param case:
-    :return:
-    """
-    res = '-'.join(map(str, case))
-
-    return graphMaze.get_Node(res, graphMaze.vertices())
 
 
 #TODO QUESTIONS :

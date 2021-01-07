@@ -1,12 +1,13 @@
 import heapq
 import itertools
 import math
+import time
 import random
 from time import time
 from pprint import pprint
+from heapq import heappush, heappop
 
 from AIs.Node import Node
-from AIs.Graphe import Graph
 
 class PriorityQueue(object):
     _REMOVED = "<REMOVED>"
@@ -73,34 +74,38 @@ class PriorityQueue(object):
         return "[%s]" % ", ".join(temp)
 
 
-def dijkstra(graph: Graph, source: object) -> tuple:
+def dijkstra(graph, source: object) -> tuple:
     """
     calcule les plus courts chemins entre les sommets d'un graphe à partir d'une origine source
+    graph non typé : cause des problème lié aux Importations circulaires (boucle en rond)
     :param graph: le graphe
     :param source: le sommet d'origine
     :return: une tuple avec les distance stockés dans la variable dist
                 et le tableau de routage
     """
     dist: dict = {source: 0}        # initialization
-    routage: dict = {}              # routing table
+    routage: dict = {source: None}              # routing table
     Q: PriorityQueue = PriorityQueue()  # create vertex priority queue Q
+    Q.add(source, priority=0)
+    #enlever la première boucle
+    """
     for v in graph.ListNodes:
         if v != source:
             dist[v] = math.inf      # unknown distance from source to v
         routage[v] = None           # predecessor of v
         Q.add(v, priority=dist[v])
-
+    """
     while not Q.is_empty():         # the main loop
         vertex: tuple = Q.pop()     # remove and return best vertex
         u: Node = vertex[1]
-        for v in graph.get_voisins(u):  # only v that are still in Q
-            alt = dist[u] + graph.get_voisin_cout(u, v)
-            if alt < dist[v]:
+
+        for v in u.get_voisins():  # only v that are still in Q
+            alt = dist[u] + u.get_voisin_cout(v)
+            if v not in routage or alt < dist[v]:
                 dist[v] = alt
-                routage[v] = graph.get_Node(u)
+                routage[v] = u
                 Q.add(v, priority=alt)
     return dist, routage
-
 
 def path_to(routing: dict, source: 'Node', destination: 'Node') -> list:
     """

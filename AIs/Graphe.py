@@ -1,5 +1,6 @@
 from AIs.Node import Node
-#from AIs.AlgoV1 import *
+from time import time
+from AIs.AlgoV1 import *
 import functools
 
 class Graph(object):
@@ -65,13 +66,26 @@ class Graph(object):
         n: Node = Node(position, False)
         return n
 
+    def get_all_fromages(self):
+        l: list = []
+        for f in self.ListNodes:
+            if f.get_fromage():
+                l.append(f)
+        return l
+
     def set_fromages(self, fromages: [(int, int)]):
 
         for f in fromages:
-            n: Node = self.get_Node(f)
+            n = self.get_Node(f)
             n.set_fromage()
 
     def set_fromages_tour(self, fromages: [(int, int)]):
+        """
+        A améliorer possible de passer par les index directement ?
+        - acceder directement à cette position là
+        :param fromages:
+        :return:
+        """
         for n in self.ListNodes:
             if n.get_coordonnes() not in fromages:
                 n.set_fromage_false()
@@ -85,33 +99,54 @@ class Graph(object):
         n2 = self.get_Node(position2)
         return n1.get_voisin_cout(n2)
 
+    def get_voisin_cout_node(self, n1, n2):
+        if n1 in self.ListNodes and n2 in n1.get_voisins():
+            return n1.get_voisin_cout(n2)
+
     def set_voisins(self, map: dict):
         for key in map.keys():
             n = self.get_Node(key)
             for key2 in map[key]:
-                n.set_voisins(key2, map[key][key2])
+                n2 = self.get_Node(key2)
+                n.set_voisins(n2, map[key][key2])
 
     def get_Node(self, position: (int, int)) -> 'Node':
-
-        for n in self.ListNodes:
-            if  position == n.get_coordonnes():
-                return n
+        """
+                for n in self.ListNodes:
+                    if  position == n.get_coordonnes():
+                        return n
+                """
+        n: Node = Node(position, False)
+        index = self.ListNodes.index(n)
+        #if index in self.ListNodes:
+        return self.ListNodes[index]
 
     def get_pos_list(self, posX: int, posY: int) -> int:
         """
-        (int, int)
         Retourne la position du noeud dans la liste grâce à sa position
         """
         X = posX * 15
         posList = X + posY
         return posList
 
-
     def get_next_node(self) -> 'Node':
         """
 
         :return:
         """
+
+        global path_to
+
+
+        nouveau_chemin: list = []
+        n_player = self.get_Node(self.playerLocation)
+        # dist, rout = dijkstra(graphMaze, n_player)
+        rout = n_player.get_routes()
+        dist = n_player.get_distances()
+
+        n_fromage = self.__prochain_fromage_plus_proche(dist, self.ListNodes)
+        nouveau_chemin = path_to(rout, n_player, n_fromage)
+        return nouveau_chemin[0]
 
     def set_joueurs_location(self, player: (int, int), ennemy: (int, int)):
         self.playerLocation = player
@@ -124,58 +159,51 @@ class Graph(object):
             return sommet.
     """
 
+    def __prochain_fromage_plus_proche(self, distances, listnodes):
+        #position de l'ennemie et ces tables de routages/disctances
+        node_ennemy: Node = self.get_Node(self.opponentLocation)
+        distances_ennemy = node_ennemy.get_distances()
+        dist: int = 999
+        next_fromage: Node = None
+        next_fromage_V2: Node = None #fromage de secours
 
-    def vertices_avec_fromages(self) -> list:
+        #on check les fromages les plus proches de nous, pour autant qu'on soit plus prêt que l'ennemie
+        for fromage in listnodes:
+            if fromage.get_fromage():
+                #attention à si vers la fin le joueur ennemy est plus proche des derniers fromages
+                if distances[fromage] < dist and distances[fromage] <= distances_ennemy[fromage]:
+                    dist = distances[fromage]
+                    next_fromage = fromage
+                else:
+                    dist = distances[fromage]
+                    next_fromage_V2 = fromage
+
+        if next_fromage is not None:
+            return next_fromage
+        else:
+            return next_fromage_V2
+
+    def check_fromage_milieu(self, playerLocation, opponnentLocation, milieu: (int, int)):
         """
-        retourne une liste de Noeuds des sommets
+
+        :param playerLocation:
+        :param opponnentLocation:
         :return:
         """
-        l: list = []
-        for key in self.graph_dict_Nodes:
-            if key.get_fromage() is True:
-                l.append(key)
-        return l
+        node_milieu: Node = self.get_Node(milieu)
+        node_player: Node = self.get_Node(self.playerLocation)
+        node_ennemy: Node = self.get_Node(self.opponentLocation)
+        distances_player = node_player.get_distances()
+        distances_ennemy = node_ennemy.get_distances()
+
+        if node_milieu.get_fromage() == False:
+            return False
+
+        if distances_player[node_milieu] <= distances_ennemy[node_milieu]:
+            return True
+        else:
+            return False
 
 
-    def edges(self) -> list:
-        """
-        returns the edges of a graph
-        :return:
-        """
-        return self.__generate_edges()
 
-    def __generate_edges(self):
-        """
-        a static method generating the edges of the graph "graph"
-        edges are represented as sets with one (a loop back to the vertex) or two vertices
-        :return:
-        """
-        edges: list = []
-        for vertex in self.__graph_dict:
-            for neighbour in self.__graph_dict[vertex]:
-                if {neighbour, vertex} not in edges:
-                    edges.append({vertex, neighbour})
-        return edges
 
-    def add_vertex(self, vertex: object):
-        """
-        if the vertex "vertex" is not in self.__graph_dict, a key "vertex" with an empty
-        dict as a value is added to the dictionary
-        otherwise nothing has to be done.
-        :param vertex: a vertex to add to the graph
-        :return:
-        """
-        if vertex not in self.__graph_dict:
-            self.__graph_dict[vertex] = {}
-            #Si on ajoute un sommet, celui-ci est lié à d'autre sommets grâce à un dico {AutreSommet, cout}
-
-        #self.__chemins = {}
-        # dicoCout : dict = {up : 0; down : 1; left: 0; right: 0} { clé = noeud : value = coût (si 0, alors c'est un mur}
-        #dans le graphe :
-        #boucle sur le double dico :
-        #première boucle sur la clé :
-        #    on crée tous les noeuds selon la clé (avec sa position)
-        #deuxieme boucle :
-        #on prends la valeur de la clé étant un autre dico :
-        #      on y ajoute ses relations
-        #      si elle existe, alors

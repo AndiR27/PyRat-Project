@@ -11,6 +11,8 @@ class Node:
         self.__routes : dict = {}
         self.__distances: dict = {}
 
+
+
     def __str__(self):
         str_fromage = ""
         if self.__cheese == True:
@@ -48,11 +50,17 @@ class Node:
     def set_routes(self, routes: dict):
         self.__routes = routes
 
+    def get_distances(self):
+        return self.__distances
+
     def set_distances(self, dist: dict):
         self.__distances = dist
 
     def __eq__(self, other):
-        return other == self.__coordonnes
+        if isinstance(other, Node):
+            return other.__coordonnes == self.__coordonnes
+        else:
+            return False
 
     def __hash__(self):
         return hash(self.__coordonnes)
