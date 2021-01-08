@@ -7,11 +7,9 @@ class Node:
         self.__coordonnes : (int, int) = position
         self.__cheese : bool = cheese
         self.__voisins : dict = {}
-        #= {down : 1} { clé = noeud : value = coût (si 0, alors c'est un mur}
+        #= {down : 1} { clé = noeud : value = coût} (si mur, alors noeud pas dans le dico)
         self.__routes : dict = {}
         self.__distances: dict = {}
-
-
 
     def __str__(self):
         str_fromage = ""
@@ -19,12 +17,14 @@ class Node:
             str_fromage += "+ fromage"
         return "case en : " + str(self.__coordonnes) + str_fromage + " "
 
-
     def get_coordonnes(self):
         return self.__coordonnes
 
     def get_Node(self, position: (int, int)):
         return self
+
+    def get_dico_voisins(self):
+        return self.__voisins
 
     def get_voisins(self):
         return self.__voisins.keys()

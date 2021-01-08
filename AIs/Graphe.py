@@ -3,14 +3,14 @@ from time import time
 from AIs.AlgoV1 import *
 import functools
 
-class Graph(object):
 
+class Graph(object):
     playerLocation: (int, int)
     opponentLocation: (int, int)
     ListNodes: [Node]
 
-
-    def __init__(self, map: dict, playerLocation: (int, int), opponentLocation: (int, int), piecesOfCheese : [(int, int)]):
+    def __init__(self, map: dict, playerLocation: (int, int), opponentLocation: (int, int),
+                 piecesOfCheese: [(int, int)]):
         """
         initializes a graph object
         if no dictionary or None is given, an empty dictionary will be used
@@ -118,7 +118,7 @@ class Graph(object):
                 """
         n: Node = Node(position, False)
         index = self.ListNodes.index(n)
-        #if index in self.ListNodes:
+        # if index in self.ListNodes:
         return self.ListNodes[index]
 
     def get_pos_list(self, posX: int, posY: int) -> int:
@@ -137,21 +137,27 @@ class Graph(object):
 
         global path_to
 
-
         nouveau_chemin: list = []
         n_player = self.get_Node(self.playerLocation)
         # dist, rout = dijkstra(graphMaze, n_player)
         rout = n_player.get_routes()
         dist = n_player.get_distances()
 
+        #d'abord go check à côté
+        dict_voisins = n_player.get_dico_voisins()
+        for key in dict_voisins.keys():
+            # check si next position ?
+            if key.get_fromage() is True and dict_voisins[key] < 3:
+                return key
+
         n_fromage = self.__prochain_fromage_plus_proche(dist, self.ListNodes)
         nouveau_chemin = path_to(rout, n_player, n_fromage)
         return nouveau_chemin[0]
 
+
     def set_joueurs_location(self, player: (int, int), ennemy: (int, int)):
         self.playerLocation = player
         self.opponentLocation = ennemy
-
 
     """
     def get_cout(self, sommet: 'Node') -> int:
@@ -160,17 +166,17 @@ class Graph(object):
     """
 
     def __prochain_fromage_plus_proche(self, distances, listnodes):
-        #position de l'ennemie et ces tables de routages/disctances
+        # position de l'ennemie et ces tables de routages/disctances
         node_ennemy: Node = self.get_Node(self.opponentLocation)
         distances_ennemy = node_ennemy.get_distances()
         dist: int = 999
         next_fromage: Node = None
-        next_fromage_V2: Node = None #fromage de secours
+        next_fromage_V2: Node = None  # fromage de secours
 
-        #on check les fromages les plus proches de nous, pour autant qu'on soit plus prêt que l'ennemie
+        # on check les fromages les plus proches de nous, pour autant qu'on soit plus prêt que l'ennemie
         for fromage in listnodes:
             if fromage.get_fromage():
-                #attention à si vers la fin le joueur ennemy est plus proche des derniers fromages
+                # attention à si vers la fin le joueur ennemy est plus proche des derniers fromages
                 if distances[fromage] < dist and distances[fromage] <= distances_ennemy[fromage]:
                     dist = distances[fromage]
                     next_fromage = fromage
@@ -204,6 +210,41 @@ class Graph(object):
         else:
             return False
 
+    def check_groupes_fromages(self, fromages_liste_full: (int, int)):
+        """
 
+        :return:
+        """
+        route_groupe: [Node] = [None] * 4000
 
+        for f in self.ListNodes:
+            nb_fromages: int = 0
+            if f.get_fromage():
+                # calcul d'une route sur 20 mouvements ? dans un rayon de 7 cases ? viser une zone avec 7 fromages atteignable facilement ?
+                routes_fromage = f.get_routes()
+                distances_fromage = f.get_distances()
+                route_groupe_tempo: list = []
+                # créer un chemin complet jusqu'à avoir 7 fromages pour trouver celui le plus opti
+                while nb_fromages < 7:
+                    # destination = prochain fromage le plus pres :
+                    # on ne veut que les distances des fromages dans notre dico :
+                    new_data = {k: v for k, v in distances_fromage.items() if k.get_fromage() == True}
+                    del new_data[f]
+                    f.set_fromage_false()
+                    destination: Node = min(new_data, key=new_data.get)
+                    route_groupe_tempo = route_groupe_tempo + path_to(routes_fromage, f, destination)
+                    nb_fromages += 1
+                    f = destination
+                    routes_fromage = f.get_routes()
+                    distances_fromage = f.get_distances()
 
+                if len(route_groupe_tempo) < len(route_groupe):
+                    route_groupe = route_groupe_tempo
+                else:
+                    pass
+                self.set_fromages(fromages_liste_full)
+
+        for i in route_groupe:
+            print(str(i), end=' ')
+        print()
+        return route_groupe

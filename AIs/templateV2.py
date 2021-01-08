@@ -44,7 +44,6 @@ def creation_graphe(mazeMap, playerLocation, opponentLocation, piecesOfCheese) -
 
     graphMaze = Graph(mazeMap, playerLocation, opponentLocation, piecesOfCheese)
     print("Graph du projet :")
-    print(graphMaze)
 
     # print(graph)
     return graphMaze
@@ -60,7 +59,6 @@ def test_dijkstra(playerLocation):
     n_player = graphMaze.get_Node(playerLocation)
     n_milieu = graphMaze.get_Node((10, 7))
     dist, rout = dijkstra(graphMaze, n_player)
-    print("clés de route")
     path = path_to(rout, n_player, n_milieu)
     """
     for i in graphMaze.ListNodes:  # liste de tous les noeuds
@@ -87,16 +85,15 @@ def test_dijkstra_tour(playerLocation, piecesOfCheese):
     # on aura notre distance
     # on aura la route
     # on peut calculer le chemin
-    t = time()
     nouveau_chemin: list = []
     n_player = graphMaze.get_Node(playerLocation)
-    #dist, rout = dijkstra(graphMaze, n_player)
+    dist, rout = dijkstra(graphMaze, n_player)
+    """
     rout = n_player.get_routes()
     dist = n_player.get_distances()
-    print(time() - t)
+    """
     n_fromage = prochain_fromage_plus_proche(piecesOfCheese, dist)
     nouveau_chemin = path_to(rout, n_player, n_fromage)
-    print(nouveau_chemin)
     return nouveau_chemin[0]
 
         #player_location = i
@@ -127,16 +124,12 @@ def direction(old: (int, int), next: 'Node') -> chr:
     difference: (int, int) = (old[0] - new[0], old[1] - new[1])
 
     if difference == (1, 0):
-        print("Gauche")
         return MOVE_LEFT
     elif difference == (-1, 0):
-        print("Droite")
         return MOVE_RIGHT
     elif difference == (0, -1):
-        print("Haut")
         return MOVE_UP
     elif difference == (0, 1):
-        print("Bas")
         return MOVE_DOWN
     else:
         raise RuntimeError("direction: old: " + str(old) + " new: " + str(new))
@@ -148,6 +141,7 @@ def preprocessing(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocati
     # Example prints that appear in the shell only at the beginning of the game
     # Remove them when you write your own program
     global fromages_restants, graphMaze, path
+    print("Template V2")
     t = time()
 
     graphMaze = creation_graphe(mazeMap, playerLocation, opponentLocation, piecesOfCheese)
@@ -206,14 +200,13 @@ def turn(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocation, playe
 
     graphMaze.set_joueurs_location(playerLocation, opponentLocation)
     graphMaze.set_fromages_tour(piecesOfCheese)
-    if (10,7) not in piecesOfCheese:
-        next_pos = test_dijkstra_tour(playerLocation, piecesOfCheese)
+
+    next_pos = test_dijkstra_tour(playerLocation, piecesOfCheese)
     #chaque tour, t'as la liste des fromages : [(10,7), (2,6),...]
     #après avoir pris le fromage du milieu, t'as la liste des fromages : [(2,6),...]
 
     # check_fromage_around(playerLocation, piecesOfCheese, path[0], mazeMap)
-    else:
-        next_pos = path.pop(0)
+
 
     # In this example, we always go up
 
@@ -274,9 +267,6 @@ def check_fromage_around(playerLocation, piecesOfCheese, next_position, map):
                 prev_case = transform_to_node(playerLocation)
                 path.insert(0, prev_case)
                 path.insert(0, new_case)
-
-
-
 
 
 
