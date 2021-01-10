@@ -1,11 +1,6 @@
 import heapq
 import itertools
-import math
-import time
-import random
-from time import time
-from pprint import pprint
-from heapq import heappush, heappop
+
 
 from AIs.Node import Node
 
@@ -66,11 +61,11 @@ def dijkstra(graph, source: object) -> tuple:
     :return: une tuple avec les distance stockés dans la variable dist
                 et le tableau de routage
     """
-    dist: dict = {source: 0}        # initialization
-    routage: dict = {source: None}              # routing table
-    Q: PriorityQueue = PriorityQueue()  # create vertex priority queue Q
+    dist: dict = {source: 0}        # Table des distances
+    routage: dict = {source: None}              # table de routage
+    Q: PriorityQueue = PriorityQueue()  # Creation de la Queue
     Q.add(source, priority=0)
-    #enlever la première boucle
+    #enlever la première boucle -> grosse amélioration de la complexité du code au preprocessing
     """
     for v in graph.ListNodes:
         if v != source:
@@ -78,13 +73,13 @@ def dijkstra(graph, source: object) -> tuple:
         routage[v] = None           # predecessor of v
         Q.add(v, priority=dist[v])
     """
-    while not Q.is_empty():         # the main loop
-        vertex: tuple = Q.pop()     # remove and return best vertex
+    while not Q.is_empty():         # Boucle de parcours sur la queue (ne sera pas vide dans que toutes les coordonnées ne seront pas faites)
+        vertex: tuple = Q.pop()     # Retourne le sommet avec la plus grande priorité
         u: Node = vertex[1]
 
-        for v in u.get_voisins():  # only v that are still in Q
+        for v in u.get_voisins():  # On prends seulement les noeuds voisins
             alt = dist[u] + u.get_voisin_cout(v)
-            if v not in routage or alt < dist[v]:
+            if v not in routage or alt < dist[v]: #vérifier si le noeud n'est pas dans la table de routage, il y sera ajouté si ce n'est pas le cas
                 dist[v] = alt
                 routage[v] = u
                 Q.add(v, priority=alt)
@@ -96,7 +91,7 @@ def path_to(routing: dict, source: 'Node', destination: 'Node') -> list:
     :param routing: la table de routage
     :param source: sommet source
     :param destination: sommet destination
-    :return: le chemin
+    :return: le chemin (sans la première value correspondant à la case où l'on se trouve)
     """
     if source not in routing or destination not in routing:
         return None
