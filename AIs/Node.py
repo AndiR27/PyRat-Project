@@ -2,7 +2,6 @@ class Node:
 
     def __init__(self, position: (int, int), cheese: bool):
 
-
         # 5-10
         self.__coordonnes : (int, int) = position
         self.__cheese : bool = cheese

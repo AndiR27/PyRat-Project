@@ -201,7 +201,10 @@ def turn(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocation, playe
     graphMaze.set_joueurs_location(playerLocation, opponentLocation)
     graphMaze.set_fromages_tour(piecesOfCheese)
 
-    next_pos = test_dijkstra_tour(playerLocation, piecesOfCheese)
+    if len(path) != 0:
+        next_pos = path.pop(0)
+    else:
+        next_pos = test_dijkstra_tour(playerLocation, piecesOfCheese)
     #chaque tour, t'as la liste des fromages : [(10,7), (2,6),...]
     #après avoir pris le fromage du milieu, t'as la liste des fromages : [(2,6),...]
 

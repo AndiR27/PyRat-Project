@@ -48,20 +48,6 @@ class PriorityQueue(object):
                 return weight, task
         raise KeyError("The priority queue is empty")
 
-    def peek(self):
-        """ Check task with highest priority, without removing.
-
-        :return: Priority, Task with highest priority
-        """
-        while self.heap:
-            weight, count, task = self.heap[0]
-            if task is PriorityQueue._REMOVED:
-                heapq.heappop(self.heap)
-            else:
-                return weight, task
-
-        return None
-
     def is_empty(self):
         """
         Check if the queue is empty
@@ -69,9 +55,6 @@ class PriorityQueue(object):
         """
         return len(self.entries) == 0
 
-    def __str__(self):
-        temp = [str(e) for e in self.heap if e[-1] is not PriorityQueue._REMOVED]
-        return "[%s]" % ", ".join(temp)
 
 
 def dijkstra(graph, source: object) -> tuple:
