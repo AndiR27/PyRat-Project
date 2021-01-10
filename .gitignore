@@ -1,3 +1,4 @@
 venv
 imports/__pycache__/
 .idea
+AIs/templateTests.py

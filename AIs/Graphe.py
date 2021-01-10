@@ -172,7 +172,7 @@ class Graph(object):
         #Lorsqu'on est proche de la victoire, check la meilleure route possible à prendre pour aller chercher les 3 derniers fromages
 
         if playerScore >= 18 and len(piecesOfCheese) > 3:
-            
+
             destination: Node = self.mode_end_fast(piecesOfCheese)
             nouveau_chemin = path_to(source.get_routes(), source, destination)
             return nouveau_chemin[0]
@@ -324,7 +324,6 @@ class Graph(object):
         if zone_ennemi == "ZoneA":
             del zones_all[0]
             meilleure_zone: list = self.__meilleure_zone(zones_all)
-            print(meilleure_zone)
         elif zone_ennemi == "ZoneB":
             del zones_all[1]
             meilleure_zone: list = self.__meilleure_zone(zones_all)
