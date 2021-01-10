@@ -119,8 +119,7 @@ def direction(old: (int, int), next: 'Node') -> chr:
 ###############################
 # This function is not expected to return anything
 def preprocessing(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocation, piecesOfCheese, timeAllowed):
-    # Example prints that appear in the shell only at the beginning of the game
-    # Remove them when you write your own program
+
     global fromages_restants, graphMaze, route_depart, strategies_ennemie_possibles
 
     t = time()
@@ -140,15 +139,6 @@ def preprocessing(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocati
     graphMaze.set_fromages(piecesOfCheese)
 
 
-    print()
-    print("<b>[mazeMap]</b> " + repr(mazeMap))
-    print("<b>[mazeWidth]</b> " + repr(mazeWidth))
-    print("<b>[mazeHeight]</b> " + repr(mazeHeight))
-    print("<b>[playerLocation]</b> " + repr(playerLocation))
-    print("<b>[opponentLocation]</b> " + repr(opponentLocation))
-    print("<b>[piecesOfCheese]</b> " + repr(piecesOfCheese))
-    print("<b>[timeAllowed]</b> " + repr(timeAllowed))
-    print(time() - t)
 
 
 ###############################

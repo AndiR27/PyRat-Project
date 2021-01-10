@@ -172,7 +172,7 @@ class Graph(object):
         #Lorsqu'on est proche de la victoire, check la meilleure route possible à prendre pour aller chercher les 3 derniers fromages
 
         if playerScore >= 18 and len(piecesOfCheese) > 3:
-            print("mode")
+            
             destination: Node = self.mode_end_fast(piecesOfCheese)
             nouveau_chemin = path_to(source.get_routes(), source, destination)
             return nouveau_chemin[0]
