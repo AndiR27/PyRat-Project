@@ -1,4 +1,81 @@
-venv
+# Environnements virtuels
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Dossiers de cache
+__pycache__/
+*.py[cod]
+*.py,cover
+*.cover
+.cache/
+.mypy_cache/
+.pytype/
+.pyre/
+.dmypy.json
+.coverage
+coverage.xml
+htmlcov/
+
+# Outils Python
+.pytest_cache/
+.hypothesis/
+.tox/
+.nox/
+
+# Fichiers de logs / base de données locale
+*.log
+pip-log.txt
+pip-delete-this-directory.txt
+db.sqlite3
+db.sqlite3-journal
+
+# IDEs / éditeurs
+.idea/
+.vscode/
+.spyderproject
+.spyproject
+.ropeproject
+
+# Fichiers de config spécifiques
+.Python
+.pdm.toml
+.pdm-python
+.pdm-build/
+.pypirc
+.cursorignore
+.cursorindexingignore
+
+# Artifacts de distribution
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+MANIFEST
+*.spec
+*.manifest
+*.so
+develop-eggs/
+downloads/
+lib/
+lib64/
+parts/
+sdist/
+share/python-wheels/
+target/
+wheels/
+.installed.cfg
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Dossier de documentation Sphinx
+docs/_build/
+
+# Dossiers spécifiques au projet
 imports/__pycache__/
-.idea
 AIs/templateTests.py
