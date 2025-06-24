@@ -56,8 +56,6 @@ def initialisation_Dijkstra():
     # on peut calculer le chemin
 
     for i in graphMaze.ListNodes:  # liste de tous les noeuds
-        # if i.get_fromage() == True:
-        # pour aller d'un point A à B :
         dist, rout = dijkstra(graphMaze, i)
         i.set_routes(rout)
         i.set_distances(dist)
@@ -122,7 +120,7 @@ def preprocessing(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocati
 
     global fromages_restants, graphMaze, route_depart, strategies_ennemie_possibles
 
-    t = time()
+    #t = time()
 
     # création de notre graphe
     graphMaze = Graph(mazeMap, playerLocation, opponentLocation, piecesOfCheese)
@@ -133,7 +131,6 @@ def preprocessing(mazeMap, mazeWidth, mazeHeight, playerLocation, opponentLocati
     # definir les possibles stratégies basiques de l'ennemie après un certain nombre de tours :
     #dico : { "nom de la strat" : [mouvements],}
     strategies_ennemie_possibles = graphMaze.strats_ennemie()
-    graphMaze.set_fromages(piecesOfCheese)
 
     # on reset correctement nos noeuds avec les fromages
     graphMaze.set_fromages(piecesOfCheese)

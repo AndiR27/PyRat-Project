@@ -79,3 +79,5 @@ docs/_build/
 # Dossiers spécifiques au projet
 imports/__pycache__/
 AIs/templateTests.py
+NotesPersos.txt
+Intro.png
