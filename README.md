@@ -1,7 +1,7 @@
 # 🧀 PyRat – Optimisation de parcours dans un labyrinthe
 
 Projet réalisé dans le cadre du module **Algorithmie et Structures de Données** à la HEG Genève.
-![img.png](Intro.png)
+![Projet PyRat](resources/illustrations/Intro.png)
 ---
 
 ## 🎯 Objectif pédagogique
@@ -34,6 +34,15 @@ L’intelligence artificielle est constituée de deux méthodes :
 
 Le fichier `template.py` sert de base pour la création d’une IA personnalisée.
 
+---
+
+
+## 📌 Contraintes
+
+- ❌ Aucun package externe (sauf NumPy)
+- ⏱️ Temps max :
+  - `preprocessing` : 3s
+  - `turn` : 100ms
 ---
 
 ## Structure de données utilisée
@@ -123,14 +132,6 @@ python pyrat.py --rat AIs/mon_ai.py --desactivate_animations
 
 ---
 
-## 📌 Contraintes
-
-- ❌ Aucun package externe (sauf NumPy)
-- ⏱️ Temps max :
-  - `preprocessing` : 3s
-  - `turn` : 100ms
----
-
 ## 🧠 Compétences mobilisées
 
 - Programmation orientée objet
@@ -140,14 +141,6 @@ python pyrat.py --rat AIs/mon_ai.py --desactivate_animations
 - Collaboration et gestion de version avec GitHub
 
 ---
-
-## 🏆 Objectif final : tournoi
-
-À la fin du semestre, un **tournoi inter-groupes** est organisé :
-- Chaque IA s’affronte en 1 vs 1
-- Victoire = collecter > 50% des fromages
-- Égalité = départagé par le nombre de mouvements
-- Bonus de note pour les meilleures IA
 
 ---
 
