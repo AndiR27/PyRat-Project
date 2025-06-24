@@ -92,13 +92,6 @@ L’approche cherche à :
 
 ---
 
-## 🖼️ Schéma de stratégie
-
-> ![Stratégie IA](./chemin/vers/1efe1b00-b90b-4d6a-a217-34324f98f36a.png)  
-> *Diagramme représentant notre architecture de décision et modules logiques.*
-
----
-
 ## 🚀 Exemples de lancement
 
 ### Partie solo IA :
@@ -139,8 +132,6 @@ python pyrat.py --rat AIs/mon_ai.py --desactivate_animations
 - Construction de structures de données personnalisées
 - Analyse de complexité
 - Collaboration et gestion de version avec GitHub
-
----
 
 ---
 
